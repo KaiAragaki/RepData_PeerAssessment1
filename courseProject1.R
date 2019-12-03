@@ -10,8 +10,8 @@ activity <- read_csv("activity.csv")
 head(activity)
 
 activityStepSum <- activity %>%
-        group_by(date) %>%
-        summarize(stepSum = sum(steps))
+        dplyr::group_by(date) %>%
+        dplyr::summarize(stepSum = sum(steps))
 
 
 hist(activityStepSum$stepSum)
@@ -20,8 +20,8 @@ summary(activityStepSum$stepSum)
 
 
 intSummary <- activity %>%
-        group_by(interval) %>%
-        summarize(stepIntervalAvg = mean(steps, na.rm = T))
+        dplyr::group_by(interval) %>%
+        dplyr::summarize(stepIntervalAvg = mean(steps, na.rm = T))
 
 ggplot(intSummary, aes(x = interval, y = stepIntervalAvg)) + geom_area(alpha = 0.5)
 # Region between 750 and 1000 appears to have the highest amount of average steps
@@ -36,12 +36,10 @@ summary(activity$steps)
 # Let's use the median for that interval for the NAs, which tends to be more
 # robust than the mean
 
-
-
 activityNaFill <- activity %>%
-        group_by(interval) %>%
-        mutate(steps = median(steps, na.rm = T)) %>%
-        summarize(stepSum = sum(steps))
+        dplyr::group_by(interval) %>%
+        dplyr::mutate(steps = median(steps, na.rm = T)) %>%
+        dplyr::summarize(stepSum = sum(steps))
 
 hist(activityNaFill$stepSum)
 # Looks like a lot of the NAs were during a time where people weren't typically moving at all.
@@ -49,3 +47,12 @@ hist(activityNaFill$stepSum)
 
 summary(activityNaFill$stepSum)
 
+isWeekend <- weekdays(activity$date) %in% c("Saturday", "Sunday")
+
+activityNaFillWeekend <- activity %>%
+        dplyr::if_else(as.list(isWeekend), "Weekend", "Weekday") %>%
+        dplyr::group_by() %>%
+        dplyr::mutate(steps = median(steps, na.rm = T))
+
+
+ggplot(activityNaFillWeekend, )

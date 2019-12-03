@@ -1,8 +1,6 @@
 ---
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
+title: "Reproducible Research: Project 1"
+output: html_document
 ---
 
 ```{r}
@@ -10,7 +8,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 ```
 
-## Loading and preprocessing the data
+## Getting and Reading Data
 
 We first start by downloading the data:
 
@@ -27,9 +25,7 @@ activity <- read_csv("activity.csv")
 ```{r}
 activity
 ```
-
-
-## What is mean total number of steps taken per day?
+## Mean Number of Steps Per Day
 
 We can summarize the data per day to find the total number of steps taken each day.
 Since there were NA values, it's wise to remove them before taking a sum.
@@ -49,8 +45,7 @@ We can also take the summary of these data to find the mean and median of the di
 summary(activityStepSum$stepSum)
 ```
 
-
-## What is the average daily activity pattern?
+## Average Daily Activity Pattern
 
 We may also be interested in the average step frequency of an individual over
 the course of a day. We can visualize this by looking at a steps-per-interval graph,
@@ -73,9 +68,7 @@ Lets find out what interval it is exactly:
 intSummary[which.max(intSummary$stepIntervalAvg),]
 ```
 
-
-
-## Imputing missing values
+## Imputing Missing Values
 
 Earlier I had mentioned that there were some NA values. How many are there exactly?
 This can be found quite rapidly with the summary function!
@@ -116,9 +109,7 @@ activityNaFillStepSum
 ```
 As we might expect, adding these new values in either raised the stepSum or had no effect, in the case that all imputed values were 0.
 
-
-
-## Are there differences in activity patterns between weekdays and weekends?
+## Weekdays vs Weekends
 
 It may be interesting to see if activity patterns are different between weekends and weekdays.
 ```{r}
@@ -135,3 +126,10 @@ ggplot(activityNaFillWeekend, aes(x = interval, y = stepIntervalAvg, col = isWee
 ```
 
 Plotting these data, it looks like people wake up later on the weekends and tend to be more active during working hours. They may also stay up a bit later too!
+
+## Bonus
+A smoothed plot, while not as accurate, may be a nicer way of looking at overall trends within these data:
+
+```{r}
+ggplot(activityNaFillWeekend, aes(x = interval, y = stepIntervalAvg, col = isWeekend)) + stat_smooth(size = 1, span = 0.2, se = F)
+```
